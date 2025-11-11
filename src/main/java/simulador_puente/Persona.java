@@ -43,6 +43,7 @@ public class Persona extends Thread {
                 puente.terminarPaso(this);
             }
         } catch (InterruptedException e) {
+            // Se interrumpe el run y la persona no puede terminar la tarea
             System.out.println("Persona: " + this.getIdPersona() + " ha sido disparada por un francotirador");
         }
     }

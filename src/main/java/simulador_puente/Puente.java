@@ -11,6 +11,7 @@ public class Puente {
             try {
                 wait();
             } catch (InterruptedException e) {
+                // Lanza la RuntimeException para que la clase Persona la capture
                 throw new RuntimeException(e);
             }
         }
