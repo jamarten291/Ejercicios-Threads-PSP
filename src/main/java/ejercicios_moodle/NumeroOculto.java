@@ -4,22 +4,37 @@ import java.util.Random;
 
 public class NumeroOculto {
     private final int numPropuesto;
-    private boolean adivinado = false;
+    private int estado;
+    private static boolean adivinado = false;
 
     public NumeroOculto() {
         this.numPropuesto = generarNumeroAleatorio();
+        this.estado = 0;
     }
 
     public boolean isAdivinado() {
         return adivinado;
     }
 
-    public synchronized void propuestaNumero(int num) {
-        this.adivinado = num == numPropuesto;
+    public synchronized int propuestaNumero(int num) {
+        if (num == this.numPropuesto && !isAdivinado()) {
+            adivinado = true;
+            setEstado(1);
+            return 1;
+        }
+        return adivinado ? -1 : 0;
     }
 
     public int getNumPropuesto() {
         return numPropuesto;
+    }
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
     }
 
     public static int generarNumeroAleatorio(){
@@ -35,15 +50,23 @@ public class NumeroOculto {
         for (int i = 0; i < jugadores.length; i++) {
             int finalI = i;
             jugadores[i] = new Thread(() -> {
-                while (!n.isAdivinado()) {
+                while (n.getEstado() == 0) {
+                    int estado;
                     int propuesta = generarNumeroAleatorio();
                     System.out.println("El jugador " + finalI + " propone el número " + propuesta);
 
-                    synchronized (n){
-                        n.propuestaNumero(propuesta);
+                    synchronized (n) {
+                         estado = n.propuestaNumero(propuesta);
+                    }
+                    switch (estado) {
+                        case 1:
+                            System.out.println("El jugador " + finalI + " ha adivinado el número " + n.getNumPropuesto());
+                            break;
+                        case -1:
+                            Thread.currentThread().interrupt();
+                            break;
                     }
                 }
-                System.out.println("El jugador " + finalI + " ha adivinado el número " + n.getNumPropuesto());
             });
         }
 
