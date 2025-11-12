@@ -44,9 +44,6 @@ public class NumeroOculto {
                     }
                 }
                 System.out.println("El jugador " + finalI + " ha adivinado el número " + n.getNumPropuesto());
-                synchronized (n){
-                    n.adivinado = true;
-                }
             });
         }
 
