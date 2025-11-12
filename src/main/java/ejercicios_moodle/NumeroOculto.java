@@ -19,6 +19,7 @@ public class NumeroOculto {
     public synchronized int propuestaNumero(int num) {
         if (num == this.numPropuesto && !isAdivinado()) {
             adivinado = true;
+            // La variable estado es necesaria para que el bucle while de cada Thread pueda acceder a este valor
             setEstado(1);
             return 1;
         }
@@ -53,7 +54,6 @@ public class NumeroOculto {
                 while (n.getEstado() == 0) {
                     int estado;
                     int propuesta = generarNumeroAleatorio();
-                    System.out.println("El jugador " + finalI + " propone el número " + propuesta);
 
                     synchronized (n) {
                          estado = n.propuestaNumero(propuesta);
@@ -64,6 +64,9 @@ public class NumeroOculto {
                             break;
                         case -1:
                             Thread.currentThread().interrupt();
+                            break;
+                        default:
+                            System.out.println("El jugador " + finalI + " propone el número " + propuesta);
                             break;
                     }
                 }
