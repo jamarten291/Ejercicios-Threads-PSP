@@ -23,7 +23,7 @@ public class NumeroOculto {
             setEstado(1);
             return 1;
         }
-        return adivinado ? -1 : 0;
+        return isAdivinado() ? -1 : 0;
     }
 
     public int getNumPropuesto() {
