@@ -5,27 +5,21 @@ import java.util.Random;
 public class NumeroOculto {
     private final int numPropuesto;
     private boolean adivinado = false;
-    private int estado;
 
     public NumeroOculto() {
         this.numPropuesto = generarNumeroAleatorio();
     }
 
+    public boolean isAdivinado() {
+        return adivinado;
+    }
+
+    public synchronized void propuestaNumero(int num) {
+        this.adivinado = num == numPropuesto;
+    }
+
     public int getNumPropuesto() {
         return numPropuesto;
-    }
-
-    public int getEstado() {
-        return estado;
-    }
-
-    public void propuestaNumero(int num) {
-        if (num == numPropuesto) {
-            adivinado = true;
-            estado = 1;
-        } else {
-            estado = adivinado ? -1 : 0;
-        }
     }
 
     public static int generarNumeroAleatorio(){
@@ -36,25 +30,28 @@ public class NumeroOculto {
         NumeroOculto n = new NumeroOculto();
         Thread[] jugadores = new Thread[10];
 
+        System.out.println("El número para adivinar es el " + n.getNumPropuesto());
+
         for (int i = 0; i < jugadores.length; i++) {
+            int finalI = i;
             jugadores[i] = new Thread(() -> {
-                n.propuestaNumero(generarNumeroAleatorio());
+                while (!n.isAdivinado()) {
+                    int propuesta = generarNumeroAleatorio();
+                    System.out.println("El jugador " + finalI + " propone el número " + propuesta);
+
+                    synchronized (n){
+                        n.propuestaNumero(propuesta);
+                    }
+                }
+                System.out.println("El jugador " + finalI + " ha adivinado el número " + n.getNumPropuesto());
+                synchronized (n){
+                    n.adivinado = true;
+                }
             });
         }
 
-        for (int i = 0; i < jugadores.length; i++) {
-            jugadores[i].start();
-        }
-
-        while (true) {
-            switch (n.getEstado()) {
-                case 1:
-                    return;
-                case -1:
-                    return;
-                default:
-                    return;
-            }
+        for (Thread j : jugadores) {
+            j.start();
         }
     }
 }
