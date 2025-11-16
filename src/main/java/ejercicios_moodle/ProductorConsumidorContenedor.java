@@ -6,31 +6,28 @@ class Container<T> {
     public Container() {
     }
 
-    public T getValue() {
-        synchronized (this) {
-            while(this.value == null){
-                try {
-                    wait();
-                } catch (InterruptedException _) {}
-            }
-
-            T result = this.value;
-            this.value = null;
-            return result;
+    public synchronized T getValue() {
+        while(this.value == null){
+            try {
+                wait();
+            } catch (InterruptedException _) {}
         }
+
+        T result = this.value;
+        this.value = null;
+        notifyAll();
+        return result;
     }
 
-    public void setValue(T value) {
-        synchronized (this) {
-            while(this.value != null){
-                try {
-                    wait();
-                } catch (InterruptedException _) {}
-            }
-
-            this.value = value;
-            notifyAll();
+    public synchronized void setValue(T value) {
+        while(this.value != null){
+            try {
+                wait();
+            } catch (InterruptedException _) {}
         }
+
+        this.value = value;
+        notifyAll();
     }
 }
 
@@ -55,7 +52,6 @@ class ConsumerThread extends Thread {
 
             synchronized (this.container) {
                 data = container.getValue();
-                notifyAll();
             }
 
             System.out.println(this.name + " ha consumido el dato: " + data);
@@ -81,7 +77,7 @@ class ProducerThread extends Thread {
                 Thread.sleep(1000);
             } catch (InterruptedException _) {}
 
-            synchronized (this) {
+            synchronized (this.container) {
                 container.setValue(num++);
             }
 
