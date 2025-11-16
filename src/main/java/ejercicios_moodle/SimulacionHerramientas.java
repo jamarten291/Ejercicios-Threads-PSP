@@ -100,7 +100,5 @@ public class SimulacionHerramientas {
         a1_2.start();
         a2.start();
         a3.start();
-
-        // El programa corre indefinidamente; para una demo corta podrías unirte y después interrumpir threads.
     }
 }
