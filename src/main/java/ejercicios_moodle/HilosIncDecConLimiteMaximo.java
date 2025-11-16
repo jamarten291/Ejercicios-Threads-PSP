@@ -1,4 +1,4 @@
-package ejercicios_moodle.limite_superior;
+package ejercicios_moodle;
 
 class Contador {
 
