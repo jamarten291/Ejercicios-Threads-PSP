@@ -9,12 +9,16 @@ class Container<T> {
     public synchronized T getValue() {
         while(this.value == null){
             try {
+                // Espera a que haya un recurso en la variable "valor"
                 wait();
             } catch (InterruptedException _) {}
         }
 
         T result = this.value;
         this.value = null;
+
+        // Al vaciar la variable y recoger su dato, notifica a los demás hilos
+        // Esto para que cualquier productor que esté esperando coloque un valor
         notifyAll();
         return result;
     }
@@ -22,11 +26,15 @@ class Container<T> {
     public synchronized void setValue(T value) {
         while(this.value != null){
             try {
+                // En caso de que haya un recurso, espera a que sea liberado
                 wait();
             } catch (InterruptedException _) {}
         }
 
         this.value = value;
+
+        // Notifica que hay un valor en la variable
+        // Esto para que cualquier consumidor acceda al valor y lo consuma
         notifyAll();
     }
 }
@@ -50,6 +58,7 @@ class ConsumerThread extends Thread {
                 Thread.sleep(1000);
             } catch (InterruptedException _) {}
 
+            // Se accede al lock del container mediante el bloque synchronized
             synchronized (this.container) {
                 data = container.getValue();
             }
@@ -77,6 +86,7 @@ class ProducerThread extends Thread {
                 Thread.sleep(1000);
             } catch (InterruptedException _) {}
 
+            // Se accede al lock del container mediante el bloque synchronized
             synchronized (this.container) {
                 container.setValue(num++);
             }
