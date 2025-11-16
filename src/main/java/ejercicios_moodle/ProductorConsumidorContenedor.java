@@ -53,7 +53,6 @@ class ConsumerThread extends Thread {
         while (true) {
             Integer data;
 
-            System.out.println(this.name + " está consumiendo un dato...");
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException _) {}
@@ -81,7 +80,6 @@ class ProducerThread extends Thread {
     @Override
     public void run() {
         while (true) {
-            System.out.println(this.name + " está produciendo un dato...");
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException _) {}
