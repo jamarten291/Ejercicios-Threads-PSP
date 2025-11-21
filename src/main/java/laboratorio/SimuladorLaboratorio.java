@@ -1,9 +1,6 @@
 package laboratorio;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 class Tarro {
     static int contId = 0;
@@ -61,9 +58,8 @@ class Cientifico extends Thread {
 
     Cientifico(String nombre, List<Tarro> tarros) {
         this.nombre = nombre;
-        tarros.sort(Comparator.comparing(Tarro::getId));
-        this.tarros = List.copyOf(tarros);
-        this.tarrosEnUso = new ArrayList<Tarro>();
+        this.tarros = tarros;
+        this.tarrosEnUso = new ArrayList<>();
     }
 
     public void realizarExperimento() {
@@ -77,6 +73,9 @@ class Cientifico extends Thread {
                 cont++;
             }
         }
+        List<Tarro> aux = new ArrayList<>(tarrosEnUso);
+        aux.sort(Comparator.comparing(Tarro::getId));
+        tarrosEnUso = List.copyOf(aux);
 
         tarrosEnUso.forEach(Tarro::usarContenido);
     }
@@ -86,7 +85,7 @@ class Cientifico extends Thread {
             tarro.liberarContenido();
             System.out.println('[' + this.nombre + ']' + " liberó " + tarro.getContenido());
         }
-        tarrosEnUso.clear();
+        tarrosEnUso = new ArrayList<>();
     }
 
     @Override
@@ -107,7 +106,7 @@ class Cientifico extends Thread {
 
 public class SimuladorLaboratorio {
     public static void main(String[] args) {
-        List<Tarro> tarros = new ArrayList<Tarro>();
+        List<Tarro> tarros = new ArrayList<>();
         tarros.add(new Tarro("Catalizador Alfa"));
         tarros.add(new Tarro("Sulfato Rutilio"));
         tarros.add(new Tarro("Estabilizador Delta"));
