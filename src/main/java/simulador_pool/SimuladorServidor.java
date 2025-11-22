@@ -78,7 +78,7 @@ class TareaBBDD extends Thread {
 
                 // Informa de que ha terminado dependiendo del code
                 System.out.printf((ok ? "[%s] terminó correctamente.\n" :
-                        "[%s] terminó forzosamente debido a un error"),
+                        "[%s] terminó sin completar la query"),
                         this.nombre
                 );
             }
